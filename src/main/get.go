@@ -11,6 +11,7 @@ import (
 	"encoding/xml"
 )
 
+// Response Bla comment
 type Response struct {
 	XMLName    xml.Name `xml:"response"`
 	Text       string   `xml:",chardata"`
@@ -26,7 +27,8 @@ type Response struct {
 
 
 func main() {
-	baseURL := "https://10.11.12.222:8089"
+	// baseURL := "https://10.11.12.222:8089"
+	baseURL := "https://10.11.12.221:8089"
 	username := "admin"
 	password := "applepie"
 
@@ -35,14 +37,20 @@ func main() {
 	url := fmt.Sprintf("%s/services/auth/login", baseURL)
 
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-	req, _ := http.NewRequest("POST", url, payloadReader)
+	req, err := http.NewRequest("POST", url, payloadReader)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Add("Authorization", "Basic YWRtaW46YXBwbGVwaWU=")
+	// req.Header.Add("Authorization", "Basic YWRtaW46YXBwbGVwaWU=")
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
 		log.Fatal(err)
+	}
+	if res.StatusCode != 200 {
+		log.Fatal(res.Status)
 	}
 	defer res.Body.Close()
 	
